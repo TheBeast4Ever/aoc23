@@ -16,9 +16,17 @@ public class Day01ComponentIntegrationTest {
 
     @Test
     public void whenStarOneInputDataFile_thenFindResult() throws IOException {
-        String expectedResponse = "74";
+        String expectedResponse = "54081";
 
         String response = day01Component.resolveFirstStar("input-day01-S1S2.txt");
+        Assertions.assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    public void whenStarTwoInputDataFile_thenFindResult() throws IOException {
+        String expectedResponse = "54649";
+
+        String response = day01Component.resolveSecondStar("input-day01-S1S2.txt");
         Assertions.assertEquals(expectedResponse, response);
     }
 }
