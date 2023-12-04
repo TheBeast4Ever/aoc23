@@ -11,11 +11,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EngineSchematic {
     private EngineSchematicPart[][] internalRepresentation;
 
-    public EngineSchematic(int width, int height) {
+    public Character[][] getData() {
+        return data;
+    }
+
+    private Character[][] data;
+
+
+    public EngineSchematic(int height, int width) {
         internalRepresentation = new EngineSchematicPart[height][width];
-        for (int y=0; y<width; y++)  {
-            for (int x=0; x<height; x++) {
+        data = new Character[height][width];
+        for (int x=0; x<width; x++)  {
+            for (int y=0; y<height; y++) {
                 internalRepresentation[y][x] = new EngineSchematicPart('.');
+                data[y][x] = '.';
             }
         }
     }

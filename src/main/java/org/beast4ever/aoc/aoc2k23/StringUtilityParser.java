@@ -16,4 +16,16 @@ public class StringUtilityParser {
 
         return listToReturn;
     }
+
+    public static boolean isDot(Character character) {
+        return character == '.' ;
+    }
+
+    public static boolean isSymbol(Character character) {
+        return !isDot(character) && !Character.isDigit(character) ;
+    }
+
+    public static boolean isDigit(Character character) {
+        return Character.isDigit(character);
+    }
 }
