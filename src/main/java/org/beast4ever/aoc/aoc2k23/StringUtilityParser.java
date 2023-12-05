@@ -25,6 +25,10 @@ public class StringUtilityParser {
         return !isDot(character) && !Character.isDigit(character) ;
     }
 
+    public static boolean isStar(Character character) {
+        return character == '*';
+    }
+
     public static boolean isDigit(Character character) {
         return Character.isDigit(character);
     }

@@ -41,7 +41,7 @@ public class EngineSchematic {
 
         for (int x=0; x<line.length(); x++) {
             EngineSchematicPart part = new EngineSchematicPart(line.charAt(x));
-
+            data[row][x] = line.charAt(x);
             internalRepresentation[row][x] = part;
 
         }
