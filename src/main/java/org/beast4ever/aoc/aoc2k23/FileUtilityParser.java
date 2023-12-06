@@ -4,8 +4,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 @Component
@@ -20,6 +22,11 @@ public class FileUtilityParser {
         File inputFile = getFile(fileName);
         List<String> lines = Files.readAllLines(inputFile.toPath());
         return lines;
+    }
+
+    public String readAllContentFile(URI filePath) throws IOException {
+        String content = Files.readString(Path.of(filePath));
+        return content;
     }
 
     private File getFile(String fileName) throws IOException

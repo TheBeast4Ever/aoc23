@@ -22,7 +22,7 @@ public class Day03ComponentIntegrationTest {
 
     @Test
     public void whenStarTwoInputDataFile_thenFindResult() throws IOException {
-        String expectedResponse = "54649";
+        String expectedResponse = "75220503";
 
         String response = day03Component.resolveSecondStar("input-day03-S1S2.txt");
         Assertions.assertEquals(expectedResponse, response);

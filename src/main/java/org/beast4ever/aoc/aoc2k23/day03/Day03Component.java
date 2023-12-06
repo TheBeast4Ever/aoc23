@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -62,6 +64,139 @@ public class Day03Component extends DayResolutionComponent {
 
     @Override
     public String resolveSecondStar(String inputFilePath) throws IOException {
-       return unimplementedResolution(inputFilePath);
+        List<Integer> gears = new ArrayList<>();
+        try {
+            List<String> lines = fileUtilityParser.readFileSplitByLines(inputFilePath);
+            int rowsSize = lines.get(0).length();
+            String contentFile = fileUtilityParser.readAllContentFile(ClassLoader.getSystemResource(inputFilePath).toURI());
+
+            char[] flatGrid = contentFile.replaceAll("\n", "").replaceAll("\r", "").toCharArray();
+            for (int x=0; x<flatGrid.length; x++) {
+                if (flatGrid[x]=='*') {
+                    List<Integer> adjacentCells = getAdjacentIndicesFromPreviousAndNextRows(x, flatGrid, rowsSize);
+                    log.info("Nb of adj cells : {}", adjacentCells.size());
+                    List<Integer> potentialGears = new ArrayList<>();
+                    adjacentCells.stream().forEach(currentPosition -> {
+                        if (Character.isDigit(flatGrid[currentPosition])) {
+                            Integer potentialGearNumber = readEntireNumberFromPosition(flatGrid, currentPosition);
+                            potentialGears.add(potentialGearNumber);
+                        }
+                    });
+                    if (potentialGears.size()==2) {
+                        gears.add(potentialGears.get(0)*potentialGears.get(1));
+                    }
+                }
+            }
+
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+       return "" + gears.stream().mapToInt(Integer::valueOf).sum();
+    }
+
+
+    private List<Integer> getAdjacentIndicesFromPreviousAndNextRows(int index, char flatGrid[], int rowsSize) {
+        List<Integer> listOfIndicesToReturn = new ArrayList<>();
+        if (index>=0 && index < flatGrid.length) {
+            int startIndexInPreviousRow = index - (rowsSize+1);
+            int endIndexInPreviousRow = index - (rowsSize-1);
+            boolean outOfBounds = false;
+            boolean digitAlreadyAdded = false;
+            int x=endIndexInPreviousRow;
+            if (x>=0 && x < flatGrid.length) {
+                do {
+                    if (Character.isDigit(flatGrid[x]) && !digitAlreadyAdded) {
+                        listOfIndicesToReturn.add(x);
+                        digitAlreadyAdded=true;
+                    }
+
+                    if (!Character.isDigit(flatGrid[x]) && digitAlreadyAdded) {
+                        digitAlreadyAdded=false;
+                    }
+
+                    x--;
+                    if (x<0) {
+                        outOfBounds = true;
+                    }
+                } while (!outOfBounds && x>=startIndexInPreviousRow);
+            }
+
+            int startIndexInCurrentRow = index + 1;
+            int endIndexInCurrentRow = index -1;
+            outOfBounds = false;
+            x=startIndexInCurrentRow;
+            if (x>=0 && x < flatGrid.length) {
+                digitAlreadyAdded=false;
+                do {
+                    if (Character.isDigit(flatGrid[x]) && !digitAlreadyAdded) {
+                        listOfIndicesToReturn.add(x);
+                        digitAlreadyAdded=true;
+                    }
+
+                    if (!Character.isDigit(flatGrid[x]) && digitAlreadyAdded) {
+                        digitAlreadyAdded=false;
+                    }
+                    x--;
+                    if (x<0) {
+                        outOfBounds = true;
+                    }
+                } while (!outOfBounds && x>=endIndexInCurrentRow);
+            }
+
+            int startIndexInNextRow = index + (rowsSize-1);
+            int endIndexInNextRow = index + (rowsSize+1);
+            outOfBounds = false;
+            x=startIndexInNextRow;
+            if (x>=0 && x < flatGrid.length) {
+                digitAlreadyAdded=false;
+                do {
+                    if (Character.isDigit(flatGrid[x]) && !digitAlreadyAdded) {
+                        listOfIndicesToReturn.add(x);
+                        digitAlreadyAdded=true;
+                    }
+
+                    if (!Character.isDigit(flatGrid[x]) && digitAlreadyAdded) {
+                        digitAlreadyAdded=false;
+                    }
+                    x++;
+                    if (x==flatGrid.length) {
+                        outOfBounds = true;
+                    }
+                } while (!outOfBounds && x<=endIndexInNextRow);
+            }
+
+        }
+        return listOfIndicesToReturn;
+    }
+
+    private Integer readEntireNumberFromPosition(char[] flatGrid, int position) {
+        if (position>=0 && position<flatGrid.length && Character.isDigit(flatGrid[position])) {
+            boolean goLeft=true;
+            boolean goRight=true;
+            int x=position;
+            List<Character> charsList = new ArrayList<>();
+            charsList.add(flatGrid[x]);
+            while(goLeft) {
+                x--;
+                if (x>=0 && Character.isDigit(flatGrid[x])) {
+                    charsList.add(0, flatGrid[x]);
+                } else {
+                    goLeft=false;
+                }
+            }
+            x=position;
+            while(goRight) {
+                x++;
+                if (x<flatGrid.length && Character.isDigit(flatGrid[x])) {
+                    charsList.add(flatGrid[x]);
+                } else {
+                    goRight=false;
+                }
+            }
+            return Integer.parseInt(charsList.stream().map(String::valueOf).collect(Collectors.joining()));
+        } else {
+            return null;
+        }
     }
 }
