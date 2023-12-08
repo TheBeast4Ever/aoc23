@@ -3,6 +3,7 @@ package org.beast4ever.aoc.aoc2k23.day08;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class DesertMap {
@@ -40,9 +41,9 @@ public class DesertMap {
         return nodesMap.size();
     }
 
-    public List<Node> getNodesEndsWith(String endLetter) {
+    public List<Node> getNodesMatchesWithPattern(Pattern pattern) {
         List<Node> nodeslist = new ArrayList<>();
-        nodesMap.keySet().stream().filter(key -> key.endsWith(endLetter)).forEach(key -> nodeslist.add(nodesMap.get(key)));
+        nodesMap.keySet().stream().filter(key -> pattern.matcher(key).find()).forEach(key -> nodeslist.add(nodesMap.get(key)));
         return nodeslist;
     }
 
