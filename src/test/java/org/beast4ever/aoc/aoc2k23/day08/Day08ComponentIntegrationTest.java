@@ -1,5 +1,6 @@
 package org.beast4ever.aoc.aoc2k23.day08;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 
 @SpringBootTest
+@Slf4j
 public class Day08ComponentIntegrationTest {
     @Autowired
     Day08Component day08Component;
@@ -53,4 +55,5 @@ public class Day08ComponentIntegrationTest {
         String response = day08Component.resolveFirstStar("test-input-day08-S1-2.txt");
         Assertions.assertEquals(expectedResponse, response);
     }
+
 }
