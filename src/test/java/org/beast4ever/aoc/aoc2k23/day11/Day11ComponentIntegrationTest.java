@@ -17,7 +17,7 @@ public class Day11ComponentIntegrationTest {
 
     @Test
     public void whenStarOneInputDataFile_thenFindResult() throws IOException {
-        String expectedResponse = "1853145119";
+        String expectedResponse = "9599070";
 
         String response = dayComponent.resolveFirstStar("input-day11-S1S2.txt");
         Assertions.assertEquals(expectedResponse, response);
@@ -25,7 +25,7 @@ public class Day11ComponentIntegrationTest {
 
     @Test
     public void whenStarOneInputTestDataFile_thenFindResult() throws IOException {
-        String expectedResponse = "114";
+        String expectedResponse = "374";
 
         String response = dayComponent.resolveFirstStar("test-input-day11-S1S2.txt");
         Assertions.assertEquals(expectedResponse, response);
@@ -33,22 +33,11 @@ public class Day11ComponentIntegrationTest {
 
     @Test
     public void whenStarTwoInputDataFile_thenFindResult() throws IOException {
-        String expectedResponse = "923";
+        String expectedResponse = "842645913794";
 
         String response = dayComponent.resolveSecondStar("input-day11-S1S2.txt");
         Assertions.assertEquals(expectedResponse, response);
     }
-
-
-    @Test
-    public void whenStarTwoTestInputDataFile_thenFindResult() throws IOException {
-        String expectedResponse = "2";
-
-        String response = dayComponent.resolveSecondStar("test-input-day11-S1S2.txt");
-        Assertions.assertEquals(expectedResponse, response);
-    }
-
-
 
 
 }

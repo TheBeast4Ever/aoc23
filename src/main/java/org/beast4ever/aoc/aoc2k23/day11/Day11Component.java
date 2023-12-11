@@ -24,22 +24,20 @@ public class Day11Component extends DayResolutionComponent {
     public String resolveFirstStar(String inputFilePath) throws IOException {
         List<String> lines = fileUtilityParser.readFileSplitByLines(inputFilePath);
         Universe universe = new Universe(lines);
-        List<Galaxy> galaxies = universe.scanGalaxies();
-        Long sumOfShortestPaths = 0l;
-
-        ICombinatoricsVector<Galaxy> vector = CombinatoricsFactory.createVector((Galaxy[]) galaxies.toArray());
-        Generator<Galaxy> combinationGalaxies = CombinatoricsFactory.createSimpleCombinationGenerator(vector, 2);
-        for (ICombinatoricsVector<Galaxy> currCombination : combinationGalaxies) {
-            log.info("Current combination {}", currCombination);
-            // TODO
-        }
+        universe.scanGalaxies();
+        Long sumOfShortestPaths = universe.computeShortestPathSumBetweenGalaxies();
 
         return "" + sumOfShortestPaths;
     }
 
     @Override
     public String resolveSecondStar(String inputFilePath) throws IOException {
-        return unimplementedResolution(inputFilePath);
+        List<String> lines = fileUtilityParser.readFileSplitByLines(inputFilePath);
+        Universe universe = new Universe(lines, Universe.COMPLEX_EXPANSION_COEFF);
+        universe.scanGalaxies();
+        Long sumOfShortestPaths = universe.computeShortestPathSumBetweenGalaxies();
+
+        return "" + sumOfShortestPaths;
     }
 
 }
