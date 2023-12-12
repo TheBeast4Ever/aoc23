@@ -24,18 +24,18 @@ public class Day10ComponentIntegrationTest {
     }
 
     @Test
-    public void whenStarOneInputTestDataFile_thenFindResult() throws IOException {
-        String expectedResponse = "114";
+    public void whenStarOneInputTest1DataFile_thenFindResult() throws IOException {
+        String expectedResponse = "4";
 
-        String response = dayComponent.resolveFirstStar("test-input-day10-S1S2.txt");
+        String response = dayComponent.resolveFirstStar("test-input-day10-S1-1.txt");
         Assertions.assertEquals(expectedResponse, response);
     }
 
     @Test
     public void whenStarTwoInputDataFile_thenFindResult() throws IOException {
-        String expectedResponse = "923";
+        String expectedResponse = "8";
 
-        String response = dayComponent.resolveSecondStar("input-day10-S1S2.txt");
+        String response = dayComponent.resolveSecondStar("input-day10-S1-2.txt");
         Assertions.assertEquals(expectedResponse, response);
     }
 
