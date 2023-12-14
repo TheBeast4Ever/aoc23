@@ -16,53 +16,61 @@ public class BinaryTreeTest {
     @Test
     public void whenTreeWith3Levels_thenDepthFirstSearchOK() {
         BinaryTree tree = buildThreeLevelsTree();
-        List<Character> expectedResults = Arrays.asList('d', 'c', 'e', 'a', 'g', 'f', 'h', '|', 'j', 'i', 'k', 'b', 'm', 'l', 'n');
-        List<Character> results = tree.returnValuesInDepthSearch(tree.getRoot());
+        List<String> expectedResults = Arrays.asList("d", "c", "e", "a", "g", "f", "h", "|", "j", "i", "k", "b", "m", "l", "n");
+        List<String> results = tree.returnValuesInDepthSearch(tree.getRoot());
         Assertions.assertEquals(expectedResults, results);
     }
 
     @Test
     public void whenTreeWith3Levels_thenLevelOrderSearchOK() {
         BinaryTree tree = buildThreeLevelsTree();
-        List<Character> expectedResults = Arrays.asList('|', 'a', 'b', 'c', 'f', 'i', 'l', 'd', 'e', 'g', 'h', 'j', 'k', 'm', 'n');
-        List<Character> results = tree.returnValuesInLevelOrder();
+        List<String> expectedResults = Arrays.asList("|", "a", "b", "c", "f", "i", "l", "d", "e", "g", "h", "j", "k", "m", "n");
+        List<String> results = tree.returnValuesInLevelOrder();
+        Assertions.assertEquals(expectedResults, results);
+    }
+
+    @Test
+    public void whenTreeWith3Levels_thenGetNodesAtSpecifiedLevelOK() {
+        BinaryTree tree = buildThreeLevelsTree();
+        List<String> expectedResults = Arrays.asList("d", "e", "g", "h", "j", "k", "m", "n");
+        List<String> results = tree.returnValuesForSpecifiedLevel(3);
         Assertions.assertEquals(expectedResults, results);
     }
 
     @Test
     public void when3LevelsRequired_thenBuildTreeOK() {
-        Node rootNode = new Node('?');
+        Node rootNode = new Node("?");
         BinaryTree tree = new BinaryTree(rootNode);
-        tree.addRecursiveLeftAndRight(rootNode, '#', '.', 3);
+        tree.addRecursiveLeftAndRight(rootNode, "#", ".", 3);
         Long result = tree.getNbOfLeaves(rootNode);
         Assertions.assertEquals(8, result);
     }
 
     @Test
     public void when10LevelsRequired_thenBuildTreeOK() {
-        Node rootNode = new Node('|');
+        Node rootNode = new Node("|");
         BinaryTree tree = new BinaryTree(rootNode);
-        tree.addRecursiveLeftAndRight(rootNode, '#', '.', 10);
+        tree.addRecursiveLeftAndRight(rootNode, "#", ".", 10);
         Long result = tree.getNbOfLeaves(rootNode);
         Assertions.assertEquals(1024, result);
     }
 
     private BinaryTree buildThreeLevelsTree() {
-        Node node1  = new Node('a');
-        Node node2  = new Node('b');
-        Node node11  = new Node('c');
-        Node node111  = new Node('d');
-        Node node112  = new Node('e');
-        Node node12  = new Node('f');
-        Node node121  = new Node('g');
-        Node node122  = new Node('h');
-        Node node21  = new Node('i');
-        Node node211  = new Node('j');
-        Node node212  = new Node('k');
-        Node node22  = new Node('l');
-        Node node221  = new Node('m');
-        Node node222  = new Node('n');
-        Node rootNode = new Node('|');
+        Node node1  = new Node("a", 1);
+        Node node2  = new Node("b", 1);
+        Node node11  = new Node("c", 2);
+        Node node111  = new Node("d", 3);
+        Node node112  = new Node("e", 3);
+        Node node12  = new Node("f", 2);
+        Node node121  = new Node("g", 3);
+        Node node122  = new Node("h", 3);
+        Node node21  = new Node("i", 2);
+        Node node211  = new Node("j", 3);
+        Node node212  = new Node("k", 3);
+        Node node22  = new Node("l", 2);
+        Node node221  = new Node("m", 3);
+        Node node222  = new Node("n", 3);
+        Node rootNode = new Node("|", 0);
 
 
         node21.setLeft(node211);

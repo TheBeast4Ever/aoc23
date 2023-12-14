@@ -4,9 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-    private Character value;
+    public Integer getLevel() {
+        return level;
+    }
 
-    public Character getValue() {
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    private Integer level;
+
+    private String value;
+
+    public String getValue() {
         return value;
     }
 
@@ -29,7 +39,12 @@ public class Node {
         this.right = right;
     }
 
-    public Node(Character value) {
+    public Node(String value) {
+        this.value = value;
+    }
+
+    public Node(String value, Integer level) {
+        this.level = level;
         this.value = value;
     }
 

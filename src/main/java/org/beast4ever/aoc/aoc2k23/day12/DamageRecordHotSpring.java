@@ -4,51 +4,80 @@ import lombok.extern.slf4j.Slf4j;
 
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class DamageRecordHotSpring {
     private String rawRecord;
-    private List<Integer> consecutiveDamagedSpringGroups;
+
+    private BinaryTree treeOfPossibilities;
+
+    private Pattern regexp;
 
     public DamageRecordHotSpring(String rawRecord, String groupsCount) {
         this.rawRecord = rawRecord;
+        this.regexp = buildRegexp(groupsCount);
+        this.treeOfPossibilities = buildTreeOfPossibilities(this.rawRecord, this.regexp);
+    }
+
+    private Pattern buildRegexp(String groupsCount) {
         StringTokenizer tokenize = new StringTokenizer(groupsCount, ",");
-        consecutiveDamagedSpringGroups = new ArrayList<>();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("[.]*");
         while (tokenize.hasMoreTokens()) {
-            consecutiveDamagedSpringGroups.add(Integer.parseInt(tokenize.nextToken()));
+            int currNbOfConsecutiveDamages = Integer.parseInt(tokenize.nextToken());
+            sb.append("[#]{"+currNbOfConsecutiveDamages+"}");
+            if (tokenize.hasMoreTokens()) {
+                sb.append("[.]+");
+            } else {
+                sb.append("[.]*");
+            }
         }
+
+        return Pattern.compile(sb.toString());
     }
 
-
-    public Long getNumberOfPossibleDamagesArrangements() {
-        Node rootNode = new Node('?');
+    private BinaryTree buildTreeOfPossibilities(String input, Pattern regexp) {
+        int level=0;
+        Node rootNode = new Node(input, level);
         BinaryTree tree = new BinaryTree(rootNode);
-        tree.addRecursiveLeftAndRight(rootNode, '#', '.', nbOfInterrogationPoints());
-        return tree.getNbOfLeaves(rootNode);
-    }
-
-
-    private Integer nbOfInterrogationPoints() {
         int indexOfNextInterrogationPoint=-1;
         int startIndex;
-        String subRawRecord = rawRecord;
-        int nbToReturn=0;
+        StringBuilder prefixKnownStr = new StringBuilder();
+
         do {
             startIndex=indexOfNextInterrogationPoint+1;
-            indexOfNextInterrogationPoint = subRawRecord.indexOf('?', startIndex);
+            indexOfNextInterrogationPoint = input.indexOf('?', startIndex);
             if (indexOfNextInterrogationPoint != -1) {
-                nbToReturn++;
+                prefixKnownStr.append(input.substring(startIndex, indexOfNextInterrogationPoint));
+                String suffixStr = indexOfNextInterrogationPoint<input.length()?input.substring(indexOfNextInterrogationPoint+1):"";
+                level++;
+                String leftValue = isValidPrefix(prefixKnownStr.toString()+"#"+suffixStr)?prefixKnownStr.toString()+"#"+suffixStr:null;
+                String rightValue = isValidPrefix(prefixKnownStr.toString()+"."+suffixStr)?prefixKnownStr.toString()+"."+suffixStr:null;
+                tree.addLeftAndRightWithNullConstraint(rootNode, leftValue, rightValue, level);
             }
         } while (indexOfNextInterrogationPoint != -1);
+        return tree;
+    }
 
-        return nbToReturn;
+    public Long getNumberOfPossibleDamagesArrangements() {
+        return treeOfPossibilities.getNbOfLeaves();
+    }
+
+    public boolean isValidPrefix(String prefixKnownStr) {
+        boolean isValid = true;
+        int consecutiveDamagesNb=0;
+        int consecutiveGroupId=0;
+
+        return isValid;
     }
 
     @Override
     public String toString() {
         return "DamageRecordsHotSpring{" +
                 "rawRecord='" + rawRecord + '\'' +
-                ", consecutiveDamagedSpringGroups=" + consecutiveDamagedSpringGroups +
+                ", regexp=" + regexp +
                 '}';
     }
 }
