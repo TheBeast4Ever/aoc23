@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
@@ -32,44 +33,100 @@ public class DamageRecordHotSpringTest {
     @Test
     public void whenSimpleRecords_thenNbOfArrangementsOK() {
         DamageRecordHotSpring record1 = new DamageRecordHotSpring("???.###", "1,1,3");
-        /*
+
         DamageRecordHotSpring record2 = new DamageRecordHotSpring(".??..??...?##.", "1,1,3");
+
         DamageRecordHotSpring record3 = new DamageRecordHotSpring("?#?#?#?#?#?#?#?", "1,3,1,6");
+
         DamageRecordHotSpring record4 = new DamageRecordHotSpring("????.#...#...", "4,1,1");
         DamageRecordHotSpring record5 = new DamageRecordHotSpring("????.######..#####.", "1,6,5");
         DamageRecordHotSpring record6 = new DamageRecordHotSpring("?###????????", "3,2,1");
-        */
+
         Assertions.assertEquals(1, record1.getNumberOfPossibleDamagesArrangements());
-        // Assertions.assertEquals(4, record2.getNumberOfPossibleDamagesArrangements());
-        // Assertions.assertEquals(1, record3.getNumberOfPossibleDamagesArrangements());
-        // Assertions.assertEquals(1, record4.getNumberOfPossibleDamagesArrangements());
-        // Assertions.assertEquals(4, record5.getNumberOfPossibleDamagesArrangements());
-        // Assertions.assertEquals(10, record6.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(4, record2.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(1, record3.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(1, record4.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(4, record5.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(10, record6.getNumberOfPossibleDamagesArrangements());
     }
 
     @Test
-    public void whenConsecutiveDamagesList_thenBuildRegexpOK() {
-        String damagesDef = "1,1,3";
-        String sample = "#.#.###";
-        Pattern pattern1 = Pattern.compile("[.]*[#]{1}[.]+[#]{1}[.]+[#]{3}[.]*");
+    public void whenUnfoldSimpleRecords_thenNbOfArrangementsOK() {
+        DamageRecordHotSpring record1 = new DamageRecordHotSpring("???.###", "1,1,3");
+        record1.unfold();
+        DamageRecordHotSpring record2 = new DamageRecordHotSpring(".??..??...?##.", "1,1,3");
+        record2.unfold();
+        DamageRecordHotSpring record3 = new DamageRecordHotSpring("?#?#?#?#?#?#?#?", "1,3,1,6");
+        record3.unfold();
+        DamageRecordHotSpring record4 = new DamageRecordHotSpring("????.#...#...", "4,1,1");
+        record4.unfold();
+        DamageRecordHotSpring record5 = new DamageRecordHotSpring("????.######..#####.", "1,6,5");
+        record5.unfold();
+        DamageRecordHotSpring record6 = new DamageRecordHotSpring("?###????????", "3,2,1");
+        record6.unfold();
 
-        StringBuilder sb = new StringBuilder();
-        StringTokenizer tokenizer = new StringTokenizer(damagesDef, ",");
-        sb.append("[.]*");
-        do {
-            int currNbOfConsecutiveDamages = Integer.parseInt(tokenizer.nextToken());
-            sb.append("[#]{"+currNbOfConsecutiveDamages+"}");
-            if (tokenizer.hasMoreTokens()) {
-                sb.append("[.]+");
-            } else {
-                sb.append("[.]*");
-            }
-        } while (tokenizer.hasMoreTokens());
+        Assertions.assertEquals(1, record1.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(16384, record2.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(1, record3.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(16, record4.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(2500, record5.getNumberOfPossibleDamagesArrangements());
+        Assertions.assertEquals(506250, record6.getNumberOfPossibleDamagesArrangements());
+    }
 
-        Pattern pattern2 = Pattern.compile(sb.toString());
+    @Test
+    public void whenRecordPart1_thenDetermineConsecutiveDamagesOK() {
+        String recordPart1 = ".###..#?????";
+        int indexOfFirstUnknownValue = recordPart1.indexOf('?');
+        List<Integer> part2 = DamageRecordHotSpring.determineConsecutiveDamagesList(recordPart1.substring(0,indexOfFirstUnknownValue));
 
-        Assertions.assertEquals(true, pattern1.matcher(sample).matches());
-        Assertions.assertEquals(true, pattern2.matcher(sample).matches());
+        Assertions.assertEquals(Arrays.asList(3, 1), part2);
+    }
+
+    @Test
+    public void whenUnfoldBigRecords_thenNbOfArrangementsOK() {
+        DamageRecordHotSpring record1 = new DamageRecordHotSpring("???.?#??????", "1,5,1");
+        record1.unfold();
+        DamageRecordHotSpring record2 = new DamageRecordHotSpring("?.????????#???", "1,2,2");
+        record2.unfold();
+
+        Long result1 = record1.getNumberOfPossibleDamagesArrangements();
+        record1=null;
+        System.gc();
+        Assertions.assertEquals(712044, result1);
+        Long result2 = record2.getNumberOfPossibleDamagesArrangements();
+        Assertions.assertEquals(1, result2);
+    }
+
+
+    @Test
+    public void whenTwoDamagesListNumbers_thenControlOfValidityOK() {
+        List<Integer> list1 = Arrays.asList(4,1);
+        List<Integer> list2 = Arrays.asList(1);
+        List<Integer> list3 = Arrays.asList(1,1);
+        List<Integer> list4 = Arrays.asList(3,1);
+        List<Integer> list5 = Arrays.asList(3,3);
+        List<Integer> list6 = Arrays.asList(3,1,1);
+        List<Integer> list7 = Arrays.asList(3,2);
+        List<Integer> list8 = Arrays.asList(3,2,2);
+        List<Integer> list9 = Arrays.asList(3,2,1);
+        List<Integer> list10 = Arrays.asList(3,4,1);
+        List<Integer> list11 = Arrays.asList(1,3,1,1);
+
+        DamageRecordHotSpring record6 = new DamageRecordHotSpring("?###????????", "3,2,2");
+        DamageRecordHotSpring record3 = new DamageRecordHotSpring("?#?#?#?#?#?#?#?", "1,3,1,6");
+
+        Assertions.assertTrue(record6.isValidConsecutiveDamageList(list2));
+        Assertions.assertTrue(record6.isValidConsecutiveDamageList(list4));
+        Assertions.assertTrue(record6.isValidConsecutiveDamageList(list7));
+        Assertions.assertTrue(record6.isValidConsecutiveDamageList(list8));
+        Assertions.assertTrue(record6.isValidConsecutiveDamageList(list9));
+        Assertions.assertTrue(record3.isValidConsecutiveDamageList(list11));
+
+        Assertions.assertFalse(record6.isValidConsecutiveDamageList(list1));
+        Assertions.assertFalse(record6.isValidConsecutiveDamageList(list3));
+        Assertions.assertFalse(record6.isValidConsecutiveDamageList(list5));
+        Assertions.assertFalse(record6.isValidConsecutiveDamageList(list6));
+        Assertions.assertFalse(record6.isValidConsecutiveDamageList(list10));
 
     }
 }

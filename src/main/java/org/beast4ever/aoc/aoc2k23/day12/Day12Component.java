@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 @Component
 @Slf4j
@@ -20,19 +22,31 @@ public class Day12Component extends DayResolutionComponent {
     @Override
     public String resolveFirstStar(String inputFilePath) throws IOException {
         List<String> lines = fileUtilityParser.readFileSplitByLines(inputFilePath);
-       Long sumOfArrangements = 0l;
+       List<Long> arrangements = new ArrayList<>();
 
+       lines.forEach(l -> {
+           StringTokenizer tokenize = new StringTokenizer(l," ");
+           DamageRecordHotSpring record = new DamageRecordHotSpring(tokenize.nextToken(), tokenize.nextToken());
+           arrangements.add(record.getNumberOfPossibleDamagesArrangements());
+       });
 
-        return "" + sumOfArrangements;
+        return "" + arrangements.stream().mapToLong(Long::valueOf).sum();
     }
 
     @Override
     public String resolveSecondStar(String inputFilePath) throws IOException {
         List<String> lines = fileUtilityParser.readFileSplitByLines(inputFilePath);
-        Long sumOfArrangements = 0l;
+        List<Long> arrangements = new ArrayList<>();
 
+        lines.forEach(l -> {
+            StringTokenizer tokenize = new StringTokenizer(l," ");
+            DamageRecordHotSpring record = new DamageRecordHotSpring(tokenize.nextToken(), tokenize.nextToken());
+            record.unfold();
+            arrangements.add(record.getNumberOfPossibleDamagesArrangements());
+            log.info("Arrangement calculated");
+        });
 
-        return "" + sumOfArrangements;
+        return "" + arrangements.stream().mapToLong(Long::valueOf).sum();
     }
 
 }
