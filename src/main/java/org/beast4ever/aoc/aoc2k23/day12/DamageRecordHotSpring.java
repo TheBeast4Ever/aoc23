@@ -128,14 +128,16 @@ public class DamageRecordHotSpring {
 
     public Long getNumberOfPossibleDamagesArrangements() {
         if (treeOfPossibilities==null) {
+            log.info("Possibilities start");
             treeOfPossibilities=buildAndReturnTreeOfPossibilities();
+            log.info("Possibilities computed");
         }
 
         RegexpUtilityService regexpService = new RegexpUtilityService();
         Pattern p = regexpService.computeRegexpForConsecutiveListOfSameChar(this.rawPart2, "#", ".");
 
         List<Node> possibilities = treeOfPossibilities.getLeavesMatchingValue(p);
-
+        log.info("nb of leaves computed");
         return (long) possibilities.size();
     }
 
