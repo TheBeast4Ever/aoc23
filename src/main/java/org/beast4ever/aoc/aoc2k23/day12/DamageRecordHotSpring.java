@@ -15,8 +15,6 @@ public class DamageRecordHotSpring {
 
     private String rawPart2;
 
-    private BinaryTree treeOfPossibilities;
-
     public DamageRecordHotSpring(String part1, String part2) {
         this.part1 = part1;
         this.rawPart2 = part2;
@@ -64,81 +62,52 @@ public class DamageRecordHotSpring {
         return listToReturn;
     }
 
-    private Node buildPossibilitiesFrom(Node fromNode) {
-        int indexOfFirstInterrogationPoint = fromNode.getValue().indexOf('?');
-        String knownPart;
-        String suffixPart;
-        if (indexOfFirstInterrogationPoint==-1) {
-            knownPart = fromNode.getValue();
-            suffixPart = "";
+    public String getNextKnownPart(String knownPart) {
+        int nbOfKnownChars = knownPart.length();
+        if (nbOfKnownChars >= part1.length()) {
+            return knownPart;
+        }
+
+        int relativeIndexOfNextUnknownChar = part1.substring(nbOfKnownChars).indexOf('?');
+        int indexOfNextUnknownChar = nbOfKnownChars + relativeIndexOfNextUnknownChar;
+
+        StringBuilder sb = new StringBuilder(knownPart);
+        if (relativeIndexOfNextUnknownChar != -1) {
+            sb.append(part1.substring(nbOfKnownChars, indexOfNextUnknownChar));
         } else {
-            knownPart = fromNode.getValue().substring(0, indexOfFirstInterrogationPoint);
-            if (indexOfFirstInterrogationPoint==(fromNode.getValue().length()-1)) {
-                suffixPart = "";
+            sb.append(part1.substring(nbOfKnownChars));
+        }
+
+        return sb.toString();
+    }
+
+    public Long computeRecursivelyNbOfPossibilities(String knownPart)  {
+        if (knownPart.length()<this.part1.length()) {
+            String possibility1 = getNextKnownPart(knownPart + "#");
+            String possibility2 = getNextKnownPart(knownPart + ".");
+
+            List<Integer> listOfDamagesPossibility1 = determineConsecutiveDamagesList(possibility1);
+            List<Integer> listOfDamagesPossibility2 = determineConsecutiveDamagesList(possibility2);
+
+            boolean isPossibility1Valid = isValidConsecutiveDamageList(listOfDamagesPossibility1);
+            boolean isPossibility2Valid = isValidConsecutiveDamageList(listOfDamagesPossibility2);
+            boolean isTwoPossibilitiesValid = isPossibility1Valid && isPossibility2Valid;
+            long nbOfArrangements = 0;
+            if (isTwoPossibilitiesValid) {
+                nbOfArrangements = computeRecursivelyNbOfPossibilities(possibility1) + computeRecursivelyNbOfPossibilities(possibility2);
+            } else if (isPossibility1Valid) {
+                nbOfArrangements = computeRecursivelyNbOfPossibilities(possibility1);
+            } else if (isPossibility2Valid) {
+                nbOfArrangements = computeRecursivelyNbOfPossibilities(possibility2);
             } else {
-                suffixPart = fromNode.getValue().substring(indexOfFirstInterrogationPoint+1);
+                nbOfArrangements = 0;
             }
-        }
-        int indexofNextInterrogationPoint = suffixPart.indexOf("?");
-        String knownSuffixPart = "";
-        String unknownSuffixPart = "";
-        if (indexofNextInterrogationPoint!=-1) {
-            knownSuffixPart = suffixPart.substring(0, indexofNextInterrogationPoint);
-            unknownSuffixPart = suffixPart.substring(indexofNextInterrogationPoint);
+            return nbOfArrangements;
         } else {
-            knownSuffixPart = suffixPart;
+            List<Integer> listOfDamages = determineConsecutiveDamagesList(knownPart);
+            boolean isListValid = listOfDamages.equals(part2);
+            return isListValid?1l:0l;
         }
-
-        String possibility1 = knownPart+"#"+knownSuffixPart;
-        String possibility2 = knownPart+"."+knownSuffixPart;
-        List<Integer> listOfDamagesPossibility1 = determineConsecutiveDamagesList(possibility1);
-        List<Integer> listOfDamagesPossibility2 = determineConsecutiveDamagesList(possibility2);
-
-        if (isValidConsecutiveDamageList(listOfDamagesPossibility1)) {
-            fromNode.setLeft(new Node(possibility1+unknownSuffixPart, fromNode.getLevel()+1));
-        }
-        if (isValidConsecutiveDamageList(listOfDamagesPossibility2)) {
-            fromNode.setRight(new Node(possibility2+unknownSuffixPart, fromNode.getLevel()+1));
-        }
-        return fromNode;
-    }
-
-    public BinaryTree buildAndReturnTreeOfPossibilities() {
-        int level=0;
-        Node rootNode = new Node(part1, level);
-        BinaryTree tree = new BinaryTree(rootNode);
-        int indexOfNextInterrogationPoint=-1;
-        int startIndex;
-
-        do {
-            startIndex=indexOfNextInterrogationPoint+1;
-            indexOfNextInterrogationPoint = part1.indexOf('?', startIndex);
-            if (indexOfNextInterrogationPoint != -1) {
-
-                List<Node> nodes = tree.returnNodesFromSameLevel(level);
-                nodes.forEach(n -> {
-                    buildPossibilitiesFrom(n);
-                });
-                level++;
-            }
-        } while (indexOfNextInterrogationPoint != -1);
-
-        return tree;
-    }
-
-    public Long getNumberOfPossibleDamagesArrangements() {
-        if (treeOfPossibilities==null) {
-            log.info("Possibilities start");
-            treeOfPossibilities=buildAndReturnTreeOfPossibilities();
-            log.info("Possibilities computed");
-        }
-
-        RegexpUtilityService regexpService = new RegexpUtilityService();
-        Pattern p = regexpService.computeRegexpForConsecutiveListOfSameChar(this.rawPart2, "#", ".");
-
-        List<Node> possibilities = treeOfPossibilities.getLeavesMatchingValue(p);
-        log.info("nb of leaves computed");
-        return (long) possibilities.size();
     }
 
     public boolean isValidConsecutiveDamageList(List<Integer> consecutiveDamageList) {

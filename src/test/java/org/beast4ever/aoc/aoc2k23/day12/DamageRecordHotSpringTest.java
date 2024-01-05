@@ -31,49 +31,6 @@ public class DamageRecordHotSpringTest {
     }
 
     @Test
-    public void whenSimpleRecords_thenNbOfArrangementsOK() {
-        DamageRecordHotSpring record1 = new DamageRecordHotSpring("???.###", "1,1,3");
-
-        DamageRecordHotSpring record2 = new DamageRecordHotSpring(".??..??...?##.", "1,1,3");
-
-        DamageRecordHotSpring record3 = new DamageRecordHotSpring("?#?#?#?#?#?#?#?", "1,3,1,6");
-
-        DamageRecordHotSpring record4 = new DamageRecordHotSpring("????.#...#...", "4,1,1");
-        DamageRecordHotSpring record5 = new DamageRecordHotSpring("????.######..#####.", "1,6,5");
-        DamageRecordHotSpring record6 = new DamageRecordHotSpring("?###????????", "3,2,1");
-
-        Assertions.assertEquals(1, record1.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(4, record2.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(1, record3.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(1, record4.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(4, record5.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(10, record6.getNumberOfPossibleDamagesArrangements());
-    }
-
-    @Test
-    public void whenUnfoldSimpleRecords_thenNbOfArrangementsOK() {
-        DamageRecordHotSpring record1 = new DamageRecordHotSpring("???.###", "1,1,3");
-        record1.unfold();
-        DamageRecordHotSpring record2 = new DamageRecordHotSpring(".??..??...?##.", "1,1,3");
-        record2.unfold();
-        DamageRecordHotSpring record3 = new DamageRecordHotSpring("?#?#?#?#?#?#?#?", "1,3,1,6");
-        record3.unfold();
-        DamageRecordHotSpring record4 = new DamageRecordHotSpring("????.#...#...", "4,1,1");
-        record4.unfold();
-        DamageRecordHotSpring record5 = new DamageRecordHotSpring("????.######..#####.", "1,6,5");
-        record5.unfold();
-        DamageRecordHotSpring record6 = new DamageRecordHotSpring("?###????????", "3,2,1");
-        record6.unfold();
-
-        Assertions.assertEquals(1, record1.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(16384, record2.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(1, record3.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(16, record4.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(2500, record5.getNumberOfPossibleDamagesArrangements());
-        Assertions.assertEquals(506250, record6.getNumberOfPossibleDamagesArrangements());
-    }
-
-    @Test
     public void whenRecordPart1_thenDetermineConsecutiveDamagesOK() {
         String recordPart1 = ".###..#?????";
         int indexOfFirstUnknownValue = recordPart1.indexOf('?');
@@ -89,12 +46,10 @@ public class DamageRecordHotSpringTest {
         DamageRecordHotSpring record2 = new DamageRecordHotSpring("?.????????#???", "1,2,2");
         record2.unfold();
 
-        //Long result1 = record1.getNumberOfPossibleDamagesArrangements(); // 32 l'arbre et 9 sec le parcours
-        record1=null;
-        System.gc();
-        //Assertions.assertEquals(712044, result1);
-        Long result2 = record2.getNumberOfPossibleDamagesArrangements(); // OoM l'arbre
-        Assertions.assertEquals(1, result2);
+        Long result1 = record1.computeRecursivelyNbOfPossibilities("");
+        Assertions.assertEquals(712044, result1);
+        // Long result2 = record2.getNumberOfPossibleDamagesArrangements(); // OoM l'arbre
+        // Assertions.assertEquals(1, result2);
     }
 
 

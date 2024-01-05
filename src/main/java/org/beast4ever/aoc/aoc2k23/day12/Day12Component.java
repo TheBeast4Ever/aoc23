@@ -27,8 +27,11 @@ public class Day12Component extends DayResolutionComponent {
        lines.forEach(l -> {
            StringTokenizer tokenize = new StringTokenizer(l," ");
            DamageRecordHotSpring record = new DamageRecordHotSpring(tokenize.nextToken(), tokenize.nextToken());
-           arrangements.add(record.getNumberOfPossibleDamagesArrangements());
+           String knownPart = record.getNextKnownPart("");
+           arrangements.add(record.computeRecursivelyNbOfPossibilities(knownPart));
        });
+
+       arrangements.stream().forEach(a -> log.info("" + a));
 
         return "" + arrangements.stream().mapToLong(Long::valueOf).sum();
     }
@@ -42,7 +45,8 @@ public class Day12Component extends DayResolutionComponent {
             StringTokenizer tokenize = new StringTokenizer(l," ");
             DamageRecordHotSpring record = new DamageRecordHotSpring(tokenize.nextToken(), tokenize.nextToken());
             record.unfold();
-            arrangements.add(record.getNumberOfPossibleDamagesArrangements());
+            String knownPart = record.getNextKnownPart("");
+            arrangements.add(record.computeRecursivelyNbOfPossibilities(knownPart));
             log.info("Arrangement calculated");
         });
 
